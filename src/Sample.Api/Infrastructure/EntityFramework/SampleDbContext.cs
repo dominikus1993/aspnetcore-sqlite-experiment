@@ -6,6 +6,11 @@ namespace Sample.Api.Infrastructure.EntityFramework;
 
 public sealed class SampleDbContext : DbContext
 {
+    
+    private static readonly Func<SampleDbContext, PersonId, CancellationToken,Task<Person?>> GetPersonQ =
+        EF.CompileAsyncQuery(
+            (SampleDbContext dbContext, PersonId id, CancellationToken cancellationToken) =>
+                dbContext.Persons.FirstOrDefault(n => n.Id == id));
     public DbSet<Person> Persons { get; set; } = null!;
     
     public SampleDbContext(DbContextOptions<SampleDbContext> options) : base(options)
@@ -22,4 +27,7 @@ public sealed class SampleDbContext : DbContext
         });
         base.OnModelCreating(modelBuilder);
     }
+
+    public Task<Person?> GetPerson(PersonId id, CancellationToken cancellationToken) =>
+        GetPersonQ(this, id, cancellationToken);
 }

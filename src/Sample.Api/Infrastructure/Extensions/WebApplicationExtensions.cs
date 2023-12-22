@@ -14,6 +14,7 @@ public static class WebApplicationExtensions
         builder.Services.AddScoped<IPersonsWriter, EfCorePersonsWriter>();
         builder.Services.AddDbContextPool<SampleDbContext>(optionsBuilder =>
         {
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             optionsBuilder.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
         return builder;
