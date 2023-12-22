@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 using Sample.Api.Core.Repositories;
 using Sample.Api.Core.Types;
 using Sample.Api.Infrastructure.EntityFramework;
@@ -16,10 +18,12 @@ public class EfCorePersonsWriter : IPersonsWriter
     public async Task AddMany(IAsyncEnumerable<Person> persons, CancellationToken cancellationToken = default)
     {
         var personsList = await persons.ToListAsync(cancellationToken: cancellationToken);
-        if (personsList is {Count: > 0})
+        if (personsList is {Count: >0})
         {
-            _sampleDbContext.Persons.AddRange(personsList);
-            await _sampleDbContext.SaveChangesAsync(cancellationToken);
+            await _sampleDbContext.Persons
+                .UpsertRange(personsList)
+                    .On(p => p.Id)
+                    .RunAsync(cancellationToken);
         }
     }
 }

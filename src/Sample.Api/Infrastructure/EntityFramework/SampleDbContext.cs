@@ -17,6 +17,7 @@ public sealed class SampleDbContext : DbContext
         modelBuilder.Entity<Person>(entity =>
         {
             entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedNever();
             entity.Property(x => x.Name).HasMaxLength(200);
         });
         base.OnModelCreating(modelBuilder);

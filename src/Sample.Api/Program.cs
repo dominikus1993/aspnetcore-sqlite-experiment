@@ -20,10 +20,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/persons", (SampleDbContext dbContext) =>
-    {
-        return dbContext.Persons.AsAsyncEnumerable();
-    })
+app.MapGet("/persons", (SampleDbContext dbContext) => dbContext.Persons.AsAsyncEnumerable())
 .WithName("GetPersons")
 .WithOpenApi();
 

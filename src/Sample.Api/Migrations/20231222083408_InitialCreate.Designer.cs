@@ -11,7 +11,7 @@ using Sample.Api.Infrastructure.EntityFramework;
 namespace Sample.Api.Migrations
 {
     [DbContext(typeof(SampleDbContext))]
-    [Migration("20231222082415_InitialCreate")]
+    [Migration("20231222083408_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -23,7 +23,6 @@ namespace Sample.Api.Migrations
             modelBuilder.Entity("Sample.Api.Core.Types.Person", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
