@@ -22,6 +22,8 @@ public static class WebApplicationExtensions
     public static async Task SetupDatabase(this WebApplication app)
     {
         await using var scope = app.Services.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<SampleDbContext>();
+        await context.Database.MigrateAsync();
         var seeder = scope.ServiceProvider.GetRequiredService<PersonsDataSeeder>();
         var writer = scope.ServiceProvider.GetRequiredService<IPersonsWriter>();
         var result = seeder.Seed();

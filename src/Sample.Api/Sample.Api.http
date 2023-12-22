@@ -1,6 +1,10 @@
 @Sample.Api_HostAddress = http://localhost:5067
+@personId = 983dfe13-29c6-43ea-94d1-9f327846fcbb
 
 GET {{Sample.Api_HostAddress}}/persons/
 Accept: application/json
 
 ###
+
+GET {{Sample.Api_HostAddress}}/persons/{{personId}}
+Accept: application/json

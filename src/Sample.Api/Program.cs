@@ -24,4 +24,9 @@ app.MapGet("/persons", (SampleDbContext dbContext) => dbContext.Persons.AsAsyncE
 .WithName("GetPersons")
 .WithOpenApi();
 
+app.MapGet("/persons/{personId:guid}", (Guid personId, SampleDbContext dbContext, CancellationToken cancellationToken) => dbContext.Persons.FindAsync([personId], cancellationToken))
+    .WithName("GetPersonById")
+    .WithOpenApi();
+
+
 await app.RunAsync();
