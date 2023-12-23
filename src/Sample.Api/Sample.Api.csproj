@@ -8,6 +8,7 @@
       <ContainerImageTags>1.0.0;latest</ContainerImageTags>
       <ContainerUser>root</ContainerUser>
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+      <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
   </PropertyGroup>
     <ItemGroup>
         <ContainerPort Include="80" Type="tcp" />
@@ -21,6 +22,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="System.Linq.Async" />
   </ItemGroup>
@@ -29,15 +31,16 @@
     <None Update="data\persons.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="database\app.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\..\.dockerignore">
       <Link>.dockerignore</Link>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="database\" />
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@ using Sample.Api.Infrastructure.EntityFramework;
 namespace Sample.Api.Migrations
 {
     [DbContext(typeof(SampleDbContext))]
-    [Migration("20231222083408_InitialCreate")]
+    [Migration("20231223125746_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

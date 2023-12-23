@@ -6,16 +6,25 @@ using Sample.Api.Infrastructure.Repositories;
 
 namespace Sample.Api.Infrastructure.Extensions;
 
+public sealed class ConnectionStrings
+{
+    public string DefaultConnection { get; set; } = null!;
+}
+
 public static class WebApplicationExtensions
 {
     public static WebApplicationBuilder AddInfrastructure(this WebApplicationBuilder builder)
     {
+        var configSection = builder.Configuration.GetSection("ConnectionStrings");
+        builder.Services.Configure<ConnectionStrings>(configSection); // 👈 Calls the source generator
+
+        var cfg = configSection.Get<ConnectionStrings>();
         builder.Services.AddScoped<PersonsDataSeeder>();
         builder.Services.AddScoped<IPersonsWriter, EfCorePersonsWriter>();
         builder.Services.AddDbContextPool<SampleDbContext>(optionsBuilder =>
         {
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            optionsBuilder.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSqlite(cfg!.DefaultConnection);
         });
         return builder;
     }
