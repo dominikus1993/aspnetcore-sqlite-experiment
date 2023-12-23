@@ -23,7 +23,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/persons", ([FromServices]SampleDbContext dbContext, int take = 10) => dbContext.Persons.Take(take).AsAsyncEnumerable())
+app.MapGet("/persons", ([FromServices]SampleDbContext dbContext, int take = 10) => dbContext.Persons.OrderBy(x => x.Id).Take(take).AsAsyncEnumerable())
 .WithName("GetPersons")
 .WithOpenApi();
 
