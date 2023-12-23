@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
 using Sample.Api.Infrastructure.EntityFramework;
 using Sample.Api.Infrastructure.Extensions;
 
@@ -20,7 +23,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/persons", (SampleDbContext dbContext) => dbContext.Persons.AsAsyncEnumerable())
+app.MapGet("/persons", ([FromServices]SampleDbContext dbContext, int take = 10) => dbContext.Persons.Take(take).AsAsyncEnumerable())
 .WithName("GetPersons")
 .WithOpenApi();
 
