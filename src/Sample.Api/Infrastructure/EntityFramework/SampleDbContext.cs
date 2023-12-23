@@ -4,7 +4,7 @@ using Sample.Api.Core.Types;
 
 namespace Sample.Api.Infrastructure.EntityFramework;
 
-public sealed class SampleDbContext : DbContext
+public sealed class SampleDbContext(DbContextOptions<SampleDbContext> options) : DbContext(options)
 {
     
     private static readonly Func<SampleDbContext, PersonId, CancellationToken,Task<Person?>> GetPersonQ =
@@ -12,11 +12,6 @@ public sealed class SampleDbContext : DbContext
             (SampleDbContext dbContext, PersonId id, CancellationToken cancellationToken) =>
                 dbContext.Persons.FirstOrDefault(n => n.Id == id));
     public DbSet<Person> Persons { get; set; } = null!;
-    
-    public SampleDbContext(DbContextOptions<SampleDbContext> options) : base(options)
-    {
-        
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
