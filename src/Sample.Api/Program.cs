@@ -1,10 +1,18 @@
+using System.Text.Json.Serialization;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using Sample.Api.Core.Types;
 using Sample.Api.Infrastructure.EntityFramework;
 using Sample.Api.Infrastructure.Extensions;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateSlimBuilder(args);
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+  options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+});
 
 builder.AddInfrastructure();
 // Add services to the container.
@@ -27,9 +35,20 @@ app.MapGet("/persons", ([FromServices]SampleDbContext dbContext, int take = 10) 
 .WithName("GetPersons")
 .WithOpenApi();
 
-app.MapGet("/persons/{personId:guid}", (PersonId personId, SampleDbContext dbContext, CancellationToken cancellationToken) => dbContext.GetPerson(personId, cancellationToken))
+app.MapGet("/persons/{personId:guid}",
+        async (PersonId personId, SampleDbContext dbContext, CancellationToken cancellationToken) =>
+        {
+            var person = await dbContext.GetPerson(personId, cancellationToken);
+            return person is null ? Results.NotFound() : Results.Ok(person);
+        })
     .WithName("GetPersonById")
     .WithOpenApi();
 
 
 await app.RunAsync();
+
+[JsonSerializable(typeof(IAsyncEnumerable<Person>))]
+[JsonSerializable(typeof(Person))]
+internal sealed partial class AppJsonSerializerContext : JsonSerializerContext
+{
+}

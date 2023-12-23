@@ -1,0 +1,1 @@
+dotnet ef dbcontext optimize -o Infrastructure/CompiledModels --context SampleDbContext --namespace Sample.Api.Infrastructure.EntityFramework
