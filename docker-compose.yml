@@ -1,0 +1,8 @@
+﻿services:
+  sample.api:
+    image: sample.api
+    build:
+      context: .
+      dockerfile: src/Sample.Api/Dockerfile
+    ports:
+      - 8080:8080
