@@ -49,6 +49,7 @@ await app.RunAsync();
 
 [JsonSerializable(typeof(IAsyncEnumerable<Person>))]
 [JsonSerializable(typeof(Person))]
-internal sealed partial class AppJsonSerializerContext : JsonSerializerContext
-{
-}
+internal sealed partial class AppJsonSerializerContext : JsonSerializerContext;
+
+
+internal partial class Program;
