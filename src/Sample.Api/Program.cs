@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Sample.Api.Core.Types;
 using Sample.Api.Infrastructure.EntityFramework;
 using Sample.Api.Infrastructure.Extensions;
+using Sample.Api.Services;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
   options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
 });
 
+builder.Services.AddHostedService<SimplePeriodicBackgroundService>();
 builder.AddInfrastructure();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

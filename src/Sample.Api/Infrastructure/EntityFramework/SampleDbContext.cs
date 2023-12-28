@@ -11,6 +11,11 @@ public sealed class SampleDbContext(DbContextOptions<SampleDbContext> options) :
         EF.CompileAsyncQuery(
             (SampleDbContext dbContext, PersonId id, CancellationToken cancellationToken) =>
                 dbContext.Persons.FirstOrDefault(n => n.Id == id));
+    
+    private static readonly Func<SampleDbContext, CancellationToken,Task<int>> CountPersonsQ =
+        EF.CompileAsyncQuery(
+            (SampleDbContext dbContext, CancellationToken cancellationToken) =>
+                dbContext.Persons.Count());
     public DbSet<Person> Persons { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,4 +31,6 @@ public sealed class SampleDbContext(DbContextOptions<SampleDbContext> options) :
 
     public Task<Person?> GetPerson(PersonId id, CancellationToken cancellationToken) =>
         GetPersonQ(this, id, cancellationToken);
+
+    public Task<int> CountPersons(CancellationToken cancellationToken) => CountPersonsQ(this, cancellationToken);
 }
