@@ -1,11 +1,17 @@
+using System.Net;
 using System.Text.Json.Serialization;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Http.Resilience;
+
+using Polly;
+using Polly.Timeout;
 
 using Sample.Api.Core.Types;
 using Sample.Api.Infrastructure.EntityFramework;
 using Sample.Api.Infrastructure.Extensions;
+using Sample.Api.Infrastructure.Repositories;
 using Sample.Api.Services;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -21,6 +27,23 @@ builder.AddInfrastructure();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHttpClient<TestHttpClient>()
+    .AddResilienceHandler(nameof(TestHttpClient), b =>
+    {
+        b.AddRetry(new HttpRetryStrategyOptions
+        {
+            MaxRetryAttempts = 5,
+            ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
+                .Handle<TimeoutRejectedException>()
+                .Handle<HttpRequestException>()
+                .HandleResult(response => response.StatusCode == HttpStatusCode.InternalServerError),
+            Delay = TimeSpan.FromSeconds(2),
+            BackoffType = DelayBackoffType.Exponential
+        });
+                
+        b.AddTimeout(TimeSpan.FromSeconds(5));
+    });
 
 var app = builder.Build();
 
@@ -46,7 +69,9 @@ app.MapGet("/persons/{personId:guid}",
     .WithName("GetPersonById")
     .WithOpenApi();
 
-
+app.MapGet("/ping", (TestHttpClient testHttpClient, CancellationToken cancellationToken) => testHttpClient.Get(cancellationToken))
+    .WithName("Ping")
+    .WithOpenApi();
 await app.RunAsync();
 
 [JsonSerializable(typeof(IAsyncEnumerable<Person>))]
